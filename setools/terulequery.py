@@ -116,7 +116,7 @@ class TERuleQuery(mixins.MatchObjClass, mixins.MatchPermission, query.PolicyQuer
                 if high < low:
                     high, low = low, high
 
-                pending_xperms.update(i for i in range(low, high + 1))
+                pending_xperms.update(iter(range(low, high + 1)))
 
             self._xperms = IoctlSet(pending_xperms)
         else:
@@ -145,9 +145,8 @@ class TERuleQuery(mixins.MatchObjClass, mixins.MatchPermission, query.PolicyQuer
             #
             # Matching on rule type
             #
-            if self.ruletype:
-                if rule.ruletype not in self.ruletype:
-                    continue
+            if self.ruletype and rule.ruletype not in self.ruletype:
+                continue
 
             #
             # Matching on source type

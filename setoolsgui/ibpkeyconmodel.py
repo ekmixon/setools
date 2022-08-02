@@ -28,22 +28,25 @@ class IbpkeyconTableModel(SEToolsTableModel):
     headers = ["Subnet Prefix", "Partition Keys", "Context"]
 
     def data(self, index, role):
-        if self.resultlist and index.isValid():
-            row = index.row()
-            col = index.column()
-            rule = self.resultlist[row]
+        if not self.resultlist or not index.isValid():
+            return
+        row = index.row()
+        col = index.column()
+        rule = self.resultlist[row]
 
-            if role == Qt.DisplayRole:
-                if col == 0:
-                    return str(rule.subnet_prefix)
-                elif col == 1:
-                    low, high = rule.pkeys
-                    if low == high:
-                        return "{0:#x}".format(low)
-                    else:
-                        return "{0:#x}-{1:#x}".format(low, high)
-                elif col == 2:
-                    return str(rule.context)
+        if role == Qt.DisplayRole:
+            if col == 0:
+                return str(rule.subnet_prefix)
+            elif col == 1:
+                low, high = rule.pkeys
+                return (
+                    "{0:#x}".format(low)
+                    if low == high
+                    else "{0:#x}-{1:#x}".format(low, high)
+                )
 
-            elif role == Qt.UserRole:
-                return rule
+            elif col == 2:
+                return str(rule.context)
+
+        elif role == Qt.UserRole:
+            return rule

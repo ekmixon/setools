@@ -69,7 +69,7 @@ class TypeTableModel(SEToolsTableModel):
                 elif col == 1:
                     return ", ".join(sorted(a.name for a in item.attributes()))
                 elif col == 2:
-                    return ", ".join(sorted(a for a in item.aliases()))
+                    return ", ".join(sorted(iter(item.aliases())))
                 elif col == 3 and item.ispermissive:
                     return "Permissive"
 

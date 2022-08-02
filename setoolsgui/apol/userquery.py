@@ -176,9 +176,10 @@ class UserQueryTab(AnalysisTab):
     # Role criteria
     #
     def set_roles(self):
-        selected_roles = []
-        for index in self.roles.selectionModel().selectedIndexes():
-            selected_roles.append(self.role_model.data(index, Qt.UserRole))
+        selected_roles = [
+            self.role_model.data(index, Qt.UserRole)
+            for index in self.roles.selectionModel().selectedIndexes()
+        ]
 
         self.query.roles = selected_roles
 
@@ -195,7 +196,7 @@ class UserQueryTab(AnalysisTab):
         try:
             self.query.level = self.level.text()
         except Exception as ex:
-            self.log.info("Level criterion error: " + str(ex))
+            self.log.info(f"Level criterion error: {str(ex)}")
             self.set_criteria_error(self.level, ex)
 
     #
@@ -208,7 +209,7 @@ class UserQueryTab(AnalysisTab):
         try:
             self.query.range_ = self.range_.text()
         except Exception as ex:
-            self.log.info("Range criterion error: " + str(ex))
+            self.log.info(f"Range criterion error: {str(ex)}")
             self.set_criteria_error(self.range_, ex)
 
     #

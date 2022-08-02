@@ -41,7 +41,5 @@ class LogHandlerToSignal(Handler, QObject):
         self.setFormatter(Formatter('%(message)s'))
 
     def emit(self, record):
-        msg = self.format(record)
-
-        if msg:
+        if msg := self.format(record):
             self.message.emit(msg)

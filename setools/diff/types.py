@@ -92,7 +92,7 @@ class TypesDifference(Difference):
             (SymbolWrapper(t) for t in self.left_policy.types()),
             (SymbolWrapper(t) for t in self.right_policy.types()))
 
-        self.modified_types = dict()
+        self.modified_types = {}
 
         for left_type, right_type in matched_types:
             # Criteria for modified types

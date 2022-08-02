@@ -53,15 +53,12 @@ class GenfsconsDifference(Difference):
             (GenfsconWrapper(fs) for fs in self.left_policy.genfscons()),
             (GenfsconWrapper(fs) for fs in self.right_policy.genfscons()))
 
-        self.modified_genfscons = []
-
-        for left_rule, right_rule in matched:
-            # Criteria for modified rules
-            # 1. change to context
-            if ContextWrapper(left_rule.context) != ContextWrapper(right_rule.context):
-                self.modified_genfscons.append(ModifiedGenfscon(left_rule,
-                                                                right_rule.context,
-                                                                left_rule.context))
+        self.modified_genfscons = [
+            ModifiedGenfscon(left_rule, right_rule.context, left_rule.context)
+            for left_rule, right_rule in matched
+            if ContextWrapper(left_rule.context)
+            != ContextWrapper(right_rule.context)
+        ]
 
     #
     # Internal functions

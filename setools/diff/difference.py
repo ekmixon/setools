@@ -113,20 +113,23 @@ class Difference:
         left_matched_items = sorted((left_items - removed_items), key=key)
         right_matched_items = sorted((right_items - added_items), key=key)
         assert len(left_matched_items) == len(right_matched_items), \
-            "Matched items assertion failure (this is an SETools bug), {0} != {1}". \
-            format(len(left_matched_items), len(right_matched_items))
+                "Matched items assertion failure (this is an SETools bug), {0} != {1}". \
+                format(len(left_matched_items), len(right_matched_items))
 
         for left, right in zip(left_matched_items, right_matched_items):
             assert left == right, \
-                "Matched items assertion failure (this is an SETools bug), {0} != {1}".format(
+                    "Matched items assertion failure (this is an SETools bug), {0} != {1}".format(
                     left, right)
 
             matched_items.add((left, right))
 
         if unwrap:
-            return set(i.origin for i in added_items), \
-                set(i.origin for i in removed_items), \
-                set((left.origin, right.origin) for (left, right) in matched_items)
+            return (
+                {i.origin for i in added_items},
+                {i.origin for i in removed_items},
+                {(left.origin, right.origin) for (left, right) in matched_items},
+            )
+
         else:
             return added_items, removed_items, matched_items
 

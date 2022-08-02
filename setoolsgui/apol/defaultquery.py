@@ -135,9 +135,10 @@ class DefaultQueryTab(AnalysisTab):
     # Class criteria
     #
     def set_tclass(self):
-        selected_classes = []
-        for index in self.tclass.selectionModel().selectedIndexes():
-            selected_classes.append(self.class_model.data(index, Qt.UserRole))
+        selected_classes = [
+            self.class_model.data(index, Qt.UserRole)
+            for index in self.tclass.selectionModel().selectedIndexes()
+        ]
 
         self.query.tclass = selected_classes
 
@@ -169,11 +170,17 @@ class DefaultQueryTab(AnalysisTab):
     #
     def run(self, button):
         # right now there is only one button.
-        rule_types = []
+        rule_types = [
+            mode.objectName()
+            for mode in [
+                self.default_user,
+                self.default_role,
+                self.default_type,
+                self.default_range,
+            ]
+            if mode.isChecked()
+        ]
 
-        for mode in [self.default_user, self.default_role, self.default_type, self.default_range]:
-            if mode.isChecked():
-                rule_types.append(mode.objectName())
 
         self.query.ruletype = rule_types
         self.query.default = self.default_value.currentData(Qt.UserRole)

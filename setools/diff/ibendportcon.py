@@ -49,18 +49,16 @@ class IbendportconsDifference(Difference):
             format(self))
 
         self.added_ibendportcons, self.removed_ibendportcons, matched_ibendportcons = \
-            self._set_diff(
+                self._set_diff(
                 (IbendportconWrapper(n) for n in self.left_policy.ibendportcons()),
                 (IbendportconWrapper(n) for n in self.right_policy.ibendportcons()))
 
-        self.modified_ibendportcons = []
-
-        for left_ibep, right_ibep in matched_ibendportcons:
-            # Criteria for modified ibendportcons
-            # 1. change to context
-            if ContextWrapper(left_ibep.context) != ContextWrapper(right_ibep.context):
-                self.modified_ibendportcons.append(
-                    ModifiedIbendportcon(left_ibep, right_ibep.context, left_ibep.context))
+        self.modified_ibendportcons = [
+            ModifiedIbendportcon(left_ibep, right_ibep.context, left_ibep.context)
+            for left_ibep, right_ibep in matched_ibendportcons
+            if ContextWrapper(left_ibep.context)
+            != ContextWrapper(right_ibep.context)
+        ]
 
     #
     # Internal functions

@@ -28,22 +28,20 @@ class PortconTableModel(SEToolsTableModel):
     headers = ["Port/Port Range", "Protocol", "Context"]
 
     def data(self, index, role):
-        if self.resultlist and index.isValid():
-            row = index.row()
-            col = index.column()
-            rule = self.resultlist[row]
+        if not self.resultlist or not index.isValid():
+            return
+        row = index.row()
+        col = index.column()
+        rule = self.resultlist[row]
 
-            if role == Qt.DisplayRole:
-                if col == 0:
-                    low, high = rule.ports
-                    if low == high:
-                        return str(low)
-                    else:
-                        return "{0}-{1}".format(low, high)
-                elif col == 1:
-                    return rule.protocol.name
-                elif col == 2:
-                    return str(rule.context)
+        if role == Qt.DisplayRole:
+            if col == 0:
+                low, high = rule.ports
+                return str(low) if low == high else "{0}-{1}".format(low, high)
+            elif col == 1:
+                return rule.protocol.name
+            elif col == 2:
+                return str(rule.context)
 
-            elif role == Qt.UserRole:
-                return rule
+        elif role == Qt.UserRole:
+            return rule

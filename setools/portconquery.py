@@ -108,10 +108,7 @@ class PortconQuery(MatchContext, PolicyQuery):
 
     @protocol.setter
     def protocol(self, value: Optional[Union[str, PortconProtocol]]) -> None:
-        if value:
-            self._protocol = PortconProtocol.lookup(value)
-        else:
-            self._protocol = None
+        self._protocol = PortconProtocol.lookup(value) if value else None
 
     def __init__(self, policy, **kwargs) -> None:
         super(PortconQuery, self).__init__(policy, **kwargs)

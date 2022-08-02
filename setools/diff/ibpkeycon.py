@@ -50,18 +50,18 @@ class IbpkeyconsDifference(Difference):
             format(self))
 
         self.added_ibpkeycons, self.removed_ibpkeycons, matched_ibpkeycons = \
-            self._set_diff(
+                self._set_diff(
                 (IbpkeyconWrapper(n) for n in self.left_policy.ibpkeycons()),
                 (IbpkeyconWrapper(n) for n in self.right_policy.ibpkeycons()))
 
-        self.modified_ibpkeycons = []
-
-        for left_ibpkey, right_ibpkey in matched_ibpkeycons:
-            # Criteria for modified ibpkeycons
-            # 1. change to context
-            if ContextWrapper(left_ibpkey.context) != ContextWrapper(right_ibpkey.context):
-                self.modified_ibpkeycons.append(
-                    ModifiedIbpkeycon(left_ibpkey, right_ibpkey.context, left_ibpkey.context))
+        self.modified_ibpkeycons = [
+            ModifiedIbpkeycon(
+                left_ibpkey, right_ibpkey.context, left_ibpkey.context
+            )
+            for left_ibpkey, right_ibpkey in matched_ibpkeycons
+            if ContextWrapper(left_ibpkey.context)
+            != ContextWrapper(right_ibpkey.context)
+        ]
 
     #
     # Internal functions

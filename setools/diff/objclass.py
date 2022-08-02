@@ -77,7 +77,7 @@ class ObjClassDifference(Difference):
             (SymbolWrapper(c) for c in self.left_policy.classes()),
             (SymbolWrapper(c) for c in self.right_policy.classes()))
 
-        self.modified_classes = dict()
+        self.modified_classes = {}
 
         for left_class, right_class in matched_classes:
             # Criteria for modified classes

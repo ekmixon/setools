@@ -105,11 +105,7 @@ class DomainTransitionAnalysis:
 
     @exclude.setter
     def exclude(self, types: Optional[Iterable[Union[Type, str]]]) -> None:
-        if types:
-            self._exclude = [self.policy.lookup_type(t) for t in types]
-        else:
-            self._exclude = []
-
+        self._exclude = [self.policy.lookup_type(t) for t in types] if types else []
         self.rebuildsubgraph = True
 
     def shortest_path(self, source: Union[Type, str], target: Union[Type, str]) \
@@ -397,7 +393,7 @@ class DomainTransitionAnalysis:
 
         # hash table keyed on (domain, entrypoint, target domain)
         type_trans: DefaultDict[Type, DefaultDict[Type, RuleHash]] = \
-            defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+                defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
         for rule in self.policy.terules():
             if rule.ruletype == TERuletype.allow:
@@ -461,12 +457,7 @@ class DomainTransitionAnalysis:
                 # get matching domain exec w/entrypoint type
                 entry = set(entrypoint[t].keys())
                 exe = set(execute[s].keys())
-                match = entry.intersection(exe)
-
-                if not match:
-                    # there are no valid entrypoints
-                    invalid_trans = True
-                else:
+                if match := entry.intersection(exe):
                     # TODO try to improve the
                     # efficiency in this loop
                     for m in match:
@@ -484,17 +475,16 @@ class DomainTransitionAnalysis:
 
                     if not edge.setexec and not edge.type_transition:
                         invalid_trans = True
+                else:
+                    # there are no valid entrypoints
+                    invalid_trans = True
             else:
                 invalid_trans = True
 
-            if edge.dyntransition:
-                if s in setcurrent:
-                    edge.setcurrent.extend(setcurrent[s])
-                else:
-                    invalid_dyntrans = True
+            if edge.dyntransition and s in setcurrent:
+                edge.setcurrent.extend(setcurrent[s])
             else:
                 invalid_dyntrans = True
-
             # cannot change the edges while iterating over them,
             # so keep appropriate lists
             if invalid_trans and invalid_dyntrans:
@@ -564,11 +554,7 @@ class DomainTransitionAnalysis:
         self.log.debug("Reverse {0}".format(self.reverse))
 
         # reverse graph for reverse DTA
-        if self.reverse:
-            self.subG = self.G.reverse(copy=True)
-        else:
-            self.subG = self.G.copy()
-
+        self.subG = self.G.reverse(copy=True) if self.reverse else self.G.copy()
         if self.exclude:
             # delete excluded domains from subgraph
             self.subG.remove_nodes_from(self.exclude)
@@ -612,9 +598,7 @@ class Edge:
         self.target: Type = target
 
         if not self.G.has_edge(source, target):
-            if not create:
-                raise ValueError("Edge does not exist in graph")
-            else:
+            if create:
                 self.G.add_edge(source, target)
                 self.transition = None
                 self.entrypoint = None
@@ -623,6 +607,8 @@ class Edge:
                 self.setexec = None
                 self.dyntransition = None
                 self.setcurrent = None
+            else:
+                raise ValueError("Edge does not exist in graph")
 
     def __getitem__(self, key):
         # This is implemented so this object can be used in NetworkX

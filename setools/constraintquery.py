@@ -112,9 +112,8 @@ class ConstraintQuery(MatchObjClass, MatchPermission, PolicyQuery):
         self.log.debug("Type: {0.type_!r}, regex: {0.type_regex}".format(self))
 
         for c in self.policy.constraints():
-            if self.ruletype:
-                if c.ruletype not in self.ruletype:
-                    continue
+            if self.ruletype and c.ruletype not in self.ruletype:
+                continue
 
             if not self._match_object_class(c):
                 continue

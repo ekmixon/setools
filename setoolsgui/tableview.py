@@ -42,40 +42,39 @@ class SEToolsTableView(QTableView):
         self.menu.popup(QCursor.pos())
 
     def event(self, e):
-        if e == QKeySequence.Copy or e == QKeySequence.Cut:
-            datamodel = self.model()
-
-            selected_text = []
-            current_row = None
-            current_col = None
-            prev_row = None
-            prev_col = None
-            for index in sorted(self.selectionModel().selectedIndexes()):
-                current_row = index.row()
-                current_col = index.column()
-
-                if prev_row is not None and current_row != prev_row:
-                    selected_text.append('\n')
-                elif prev_col is not None and current_col != prev_col:
-                    selected_text.append('\t')
-
-                selected_text.append(datamodel.data(index, Qt.DisplayRole))
-
-                prev_row = current_row
-                prev_col = current_col
-
-            QApplication.clipboard().setText("".join(selected_text))
-            return True
-
-        else:
+        if e not in [QKeySequence.Copy, QKeySequence.Cut]:
             return super(SEToolsTableView, self).event(e)
+        datamodel = self.model()
+
+        selected_text = []
+        current_row = None
+        current_col = None
+        prev_row = None
+        prev_col = None
+        for index in sorted(self.selectionModel().selectedIndexes()):
+            current_row = index.row()
+            current_col = index.column()
+
+            if prev_row is not None and current_row != prev_row:
+                selected_text.append('\n')
+            elif prev_col is not None and current_col != prev_col:
+                selected_text.append('\t')
+
+            selected_text.append(datamodel.data(index, Qt.DisplayRole))
+
+            prev_row = current_row
+            prev_col = current_col
+
+        QApplication.clipboard().setText("".join(selected_text))
+        return True
 
     def choose_csv_save_location(self):
-        filename = QFileDialog.getSaveFileName(self, "Save to CSV", "table.csv",
-                                               "Comma Separated Values Spreadsheet (*.csv);;"
-                                               "All Files (*)")[0]
-
-        if filename:
+        if filename := QFileDialog.getSaveFileName(
+            self,
+            "Save to CSV",
+            "table.csv",
+            "Comma Separated Values Spreadsheet (*.csv);;" "All Files (*)",
+        )[0]:
             self.save_csv(filename)
 
     def save_csv(self, filename):
@@ -89,9 +88,10 @@ class SEToolsTableView(QTableView):
             writer = csv.writer(fd, quoting=csv.QUOTE_MINIMAL)
 
             # write headers
-            csv_row = []
-            for col in range(col_count):
-                csv_row.append(datamodel.headerData(col, Qt.Horizontal, Qt.DisplayRole))
+            csv_row = [
+                datamodel.headerData(col, Qt.Horizontal, Qt.DisplayRole)
+                for col in range(col_count)
+            ]
 
             writer.writerow(csv_row)
 

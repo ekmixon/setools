@@ -100,11 +100,7 @@ class InfoFlowAnalysis:
 
     @exclude.setter
     def exclude(self, types: Optional[Iterable[Union[Type, str]]]) -> None:
-        if types:
-            self._exclude: List[Type] = [self.policy.lookup_type(t) for t in types]
-        else:
-            self._exclude = []
-
+        self._exclude = [self.policy.lookup_type(t) for t in types] if types else []
         self.rebuildsubgraph = True
 
     def shortest_path(self, source: Type, target: Type) -> Iterable[InfoFlowPath]:
@@ -248,11 +244,7 @@ class InfoFlowAnalysis:
             # NetworkXError: the type is valid but not in graph, e.g.
             # excluded or disconnected due to min weight
 
-            if out:
-                flows = self.subG.out_edges(s)
-            else:
-                flows = self.subG.in_edges(s)
-
+            flows = self.subG.out_edges(s) if out else self.subG.in_edges(s)
             for source, target in flows:
                 yield InfoFlowStep(self.subG, source, target)
 
@@ -370,12 +362,7 @@ class InfoFlowAnalysis:
                 edge = InfoFlowStep(self.subG, s, t)
 
                 # collect disabled rules
-                rule_list = []
-                # pylint: disable=not-an-iterable
-                for rule in edge.rules:
-                    if not rule.enabled(**self.booleans):
-                        rule_list.append(rule)
-
+                rule_list = [rule for rule in edge.rules if not rule.enabled(**self.booleans)]
                 deleted_rules: List[AVRule] = []
                 for rule in rule_list:
                     if rule not in deleted_rules:

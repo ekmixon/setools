@@ -52,7 +52,7 @@ class CommonDifference(Difference):
             (SymbolWrapper(c) for c in self.left_policy.commons()),
             (SymbolWrapper(c) for c in self.right_policy.commons()))
 
-        self.modified_commons = dict()
+        self.modified_commons = {}
 
         for left_common, right_common in matched_commons:
             # Criteria for modified commons

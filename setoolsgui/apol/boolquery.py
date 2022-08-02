@@ -62,7 +62,7 @@ class BoolQueryTab(AnalysisTab):
 
         # populate bool list
         self.bool_model = SEToolsListModel(self)
-        self.bool_model.item_list = sorted(r for r in self.policy.bools())
+        self.bool_model.item_list = sorted(iter(self.policy.bools()))
         self.bools.setModel(self.bool_model)
 
         # set up results

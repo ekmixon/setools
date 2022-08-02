@@ -192,9 +192,10 @@ class MLSRuleQueryTab(AnalysisTab):
     #
 
     def set_tclass(self):
-        selected_classes = []
-        for index in self.tclass.selectionModel().selectedIndexes():
-            selected_classes.append(self.class_model.data(index, Qt.UserRole))
+        selected_classes = [
+            self.class_model.data(index, Qt.UserRole)
+            for index in self.tclass.selectionModel().selectedIndexes()
+        ]
 
         self.query.tclass = selected_classes
 

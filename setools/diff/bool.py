@@ -68,11 +68,11 @@ class BooleansDifference(Difference):
                       format(self))
 
         self.added_booleans, self.removed_booleans, matched_booleans = \
-            self._set_diff(
+                self._set_diff(
                 (SymbolWrapper(b) for b in self.left_policy.bools()),
                 (SymbolWrapper(b) for b in self.right_policy.bools()))
 
-        self.modified_booleans = dict()
+        self.modified_booleans = {}
 
         for left_boolean, right_boolean in matched_booleans:
             # Criteria for modified booleans

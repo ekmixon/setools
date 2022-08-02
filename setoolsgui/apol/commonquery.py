@@ -62,7 +62,7 @@ class CommonQueryTab(AnalysisTab):
 
         # populate commons list
         self.common_model = SEToolsListModel(self)
-        self.common_model.item_list = sorted(c for c in self.policy.commons())
+        self.common_model.item_list = sorted(iter(self.policy.commons()))
         self.commons.setModel(self.common_model)
 
         # populate perm list
@@ -157,9 +157,10 @@ class CommonQueryTab(AnalysisTab):
     # Permissions criteria
     #
     def set_perms(self):
-        selected_perms = []
-        for index in self.perms.selectionModel().selectedIndexes():
-            selected_perms.append(self.perms_model.data(index, Qt.UserRole))
+        selected_perms = [
+            self.perms_model.data(index, Qt.UserRole)
+            for index in self.perms.selectionModel().selectedIndexes()
+        ]
 
         self.query.perms = selected_perms
 

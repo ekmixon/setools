@@ -232,9 +232,10 @@ class TERuleQueryTab(AnalysisTab):
     #
 
     def set_tclass(self):
-        selected_classes = []
-        for index in self.tclass.selectionModel().selectedIndexes():
-            selected_classes.append(self.class_model.data(index, Qt.UserRole))
+        selected_classes = [
+            self.class_model.data(index, Qt.UserRole)
+            for index in self.tclass.selectionModel().selectedIndexes()
+        ]
 
         self.query.tclass = selected_classes
         self.perms_model.set_classes(selected_classes)
@@ -247,9 +248,10 @@ class TERuleQueryTab(AnalysisTab):
     #
 
     def set_perms(self):
-        selected_perms = []
-        for index in self.perms.selectionModel().selectedIndexes():
-            selected_perms.append(self.perms_model.data(index, Qt.UserRole))
+        selected_perms = [
+            self.perms_model.data(index, Qt.UserRole)
+            for index in self.perms.selectionModel().selectedIndexes()
+        ]
 
         self.query.perms = selected_perms
 
@@ -275,9 +277,7 @@ class TERuleQueryTab(AnalysisTab):
 
     def set_xperm(self):
         try:
-            text = self.xperms.text()
-
-            if text:
+            if text := self.xperms.text():
                 self.query.xperms = xperm_str_to_tuple_ranges(text)
             else:
                 self.query.xperms = None
@@ -313,9 +313,10 @@ class TERuleQueryTab(AnalysisTab):
     #
 
     def set_bools(self):
-        selected_bools = []
-        for index in self.bool_criteria.selectionModel().selectedIndexes():
-            selected_bools.append(self.bool_model.data(index, Qt.UserRole))
+        selected_bools = [
+            self.bool_model.data(index, Qt.UserRole)
+            for index in self.bool_criteria.selectionModel().selectedIndexes()
+        ]
 
         self.query.boolean = selected_bools
 
@@ -415,7 +416,7 @@ class TERuleQueryTab(AnalysisTab):
         # if query is broad, show warning.
         if not any((self.query.source, self.query.target, self.query.tclass, self.query.perms,
                     self.query.xperms, self.query.default, self.query.boolean)) \
-                and max_results > 1000:
+                    and max_results > 1000:
 
             reply = QMessageBox.question(
                 self, "Continue?",

@@ -106,7 +106,7 @@ class CategoriesDifference(Difference):
             (category_wrapper_factory(c) for c in self.left_policy.categories()),
             (category_wrapper_factory(c) for c in self.right_policy.categories()))
 
-        self.modified_categories = dict()
+        self.modified_categories = {}
 
         for left_category, right_category in matched_categories:
             # Criteria for modified categories
@@ -146,11 +146,11 @@ class SensitivitiesDifference(Difference):
             format(self))
 
         self.added_sensitivities, self.removed_sensitivities, matched_sensitivities = \
-            self._set_diff(
+                self._set_diff(
                 (sensitivity_wrapper_factory(s) for s in self.left_policy.sensitivities()),
                 (sensitivity_wrapper_factory(s) for s in self.right_policy.sensitivities()))
 
-        self.modified_sensitivities = dict()
+        self.modified_sensitivities = {}
 
         for left_sens, right_sens in matched_sensitivities:
             # Criteria for modified sensitivities
@@ -190,7 +190,7 @@ class LevelDeclsDifference(Difference):
             format(self))
 
         self.added_levels, self.removed_levels, matched_levels = \
-            self._set_diff(
+                self._set_diff(
                 (LevelDeclWrapper(s) for s in self.left_policy.levels()),
                 (LevelDeclWrapper(s) for s in self.right_policy.levels()))
 
@@ -250,7 +250,7 @@ class LevelWrapper(Wrapper[Level]):
     def __init__(self, level: Level) -> None:
         self.origin = level
         self.sensitivity = sensitivity_wrapper_factory(level.sensitivity)
-        self.categories = set(category_wrapper_factory(c) for c in level.categories())
+        self.categories = {category_wrapper_factory(c) for c in level.categories()}
 
     def __hash__(self):
         return hash(self.origin)

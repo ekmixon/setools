@@ -68,7 +68,7 @@ args = parser.parse_args()
 if not args.target and (args.shortest_path or args.all_paths):
     parser.error("The target type must be specified to determine a path.")
 
-if args.target and not (args.shortest_path or args.all_paths):
+if args.target and not args.shortest_path and not args.all_paths:
     parser.error("A target type is not used for flows in/out of a type.")
 
 if args.limit_flows < 0:
@@ -106,10 +106,11 @@ try:
                                  booleans=booleans)
 
     if args.shortest_path or args.all_paths:
-        if args.shortest_path:
-            paths = g.all_shortest_paths(args.source, args.target)
-        else:
-            paths = g.all_paths(args.source, args.target, args.all_paths)
+        paths = (
+            g.all_shortest_paths(args.source, args.target)
+            if args.shortest_path
+            else g.all_paths(args.source, args.target, args.all_paths)
+        )
 
         flownum = 0
         for flownum, path in enumerate(paths, start=1):

@@ -74,9 +74,9 @@ class CriteriaDescriptor:
                  default_value=None, enum_class: Optional[Enum] = None) -> None:
 
         assert name_regex or lookup_function or enum_class, \
-            "A simple attribute should be used if there is no regex, lookup function, or enum."
+                "A simple attribute should be used if there is no regex, lookup function, or enum."
         assert not (lookup_function and enum_class), \
-            "Lookup functions and enum classes are mutually exclusive."
+                "Lookup functions and enum classes are mutually exclusive."
         self.regex: Optional[str] = name_regex
         self.default_value = default_value
         self.lookup_function: Optional[Union[Callable, str]] = lookup_function
@@ -173,7 +173,7 @@ class CriteriaPermissionSetDescriptor(CriteriaDescriptor):
         elif self.regex and getattr(obj, self.regex, False):
             self.instances[obj] = re.compile(value)
         else:
-            perms = frozenset(v for v in value)
+            perms = frozenset(value)
 
             if getattr(obj, "tclass_regex", False):
                 tclass = None
@@ -306,10 +306,7 @@ class PermissionMapDescriptor:
         self.validator: Callable = validator
 
     def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        return obj._perm_map[obj.class_][obj.perm][self.name]
+        return self if obj is None else obj._perm_map[obj.class_][obj.perm][self.name]
 
     def __set__(self, obj, value):
         obj._perm_map[obj.class_][obj.perm][self.name] = self.validator(value)

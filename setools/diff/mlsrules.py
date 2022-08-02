@@ -70,15 +70,12 @@ class MLSRulesDifference(Difference):
             self._expand_generator(self._right_mls_rules[MLSRuletype.range_transition],
                                    MLSRuleWrapper))
 
-        modified = []
+        modified = [
+            ModifiedMLSRule(left_rule, right_rule.default, left_rule.default)
+            for left_rule, right_rule in matched
+            if RangeWrapper(left_rule.default) != RangeWrapper(right_rule.default)
+        ]
 
-        for left_rule, right_rule in matched:
-            # Criteria for modified rules
-            # 1. change to default range
-            if RangeWrapper(left_rule.default) != RangeWrapper(right_rule.default):
-                modified.append(ModifiedMLSRule(left_rule,
-                                                right_rule.default,
-                                                left_rule.default))
 
         self.added_range_transitions = added
         self.removed_range_transitions = removed

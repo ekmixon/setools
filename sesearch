@@ -163,11 +163,7 @@ try:
         # these are broken out from the above statement to prevent making a list
         # with an empty string in it (split on empty string)
         if args.tclass:
-            if args.tclass_regex:
-                terq.tclass = args.tclass
-            else:
-                terq.tclass = args.tclass.split(",")
-
+            terq.tclass = args.tclass if args.tclass_regex else args.tclass.split(",")
         if args.perms:
             terq.perms = args.perms.split(",")
 
@@ -178,13 +174,12 @@ try:
         if args.boolean:
             if args.boolean_regex:
                 terq.boolean = args.boolean
+            elif args.policy:
+                terq.boolean = args.boolean.split(",")
             else:
-                if args.policy:
-                    terq.boolean = args.boolean.split(",")
-                else:
-                    # try to find substitutions for old boolean names
-                    terq.boolean = map(setools.policyrep.lookup_boolean_name_sub,
-                                       args.boolean.split(","))
+                # try to find substitutions for old boolean names
+                terq.boolean = map(setools.policyrep.lookup_boolean_name_sub,
+                                   args.boolean.split(","))
 
         for te_result in sorted(terq.results()):
             print(te_result)
@@ -205,11 +200,7 @@ try:
         # these are broken out from the above statement to prevent making a list
         # with an empty string in it (split on empty string)
         if args.tclass:
-            if args.tclass_regex:
-                rbacrq.tclass = args.tclass
-            else:
-                rbacrq.tclass = args.tclass.split(",")
-
+            rbacrq.tclass = args.tclass if args.tclass_regex else args.tclass.split(",")
         for rbac_result in sorted(rbacrq.results()):
             print(rbac_result)
 
@@ -228,11 +219,7 @@ try:
         # these are broken out from the above statement to prevent making a list
         # with an empty string in it (split on empty string)
         if args.tclass:
-            if args.tclass_regex:
-                mlsrq.tclass = args.tclass
-            else:
-                mlsrq.tclass = args.tclass.split(",")
-
+            mlsrq.tclass = args.tclass if args.tclass_regex else args.tclass.split(",")
         for mls_result in sorted(mlsrq.results()):
             print(mls_result)
 

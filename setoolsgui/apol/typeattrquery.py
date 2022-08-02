@@ -62,7 +62,7 @@ class TypeAttributeQueryTab(AnalysisTab):
 
         # populate attr list
         self.attr_model = SEToolsListModel(self)
-        self.attr_model.item_list = sorted(r for r in self.policy.typeattributes())
+        self.attr_model.item_list = sorted(iter(self.policy.typeattributes()))
         self.attrs.setModel(self.attr_model)
 
         # populate type list
@@ -153,9 +153,10 @@ class TypeAttributeQueryTab(AnalysisTab):
     # Type criteria
     #
     def set_types(self):
-        selected_types = []
-        for index in self.types.selectionModel().selectedIndexes():
-            selected_types.append(self.type_model.data(index, Qt.UserRole))
+        selected_types = [
+            self.type_model.data(index, Qt.UserRole)
+            for index in self.types.selectionModel().selectedIndexes()
+        ]
 
         self.query.types = selected_types
 

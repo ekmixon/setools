@@ -109,10 +109,7 @@ class IbpkeyconQuery(MatchContext, PolicyQuery):
 
     @subnet_prefix.setter
     def subnet_prefix(self, value: Optional[Union[str, IPv6Address]]) -> None:
-        if value:
-            self._subnet_prefix = IPv6Address(value)
-        else:
-            self._subnet_prefix = None
+        self._subnet_prefix = IPv6Address(value) if value else None
 
     def results(self) -> Iterable[Ibpkeycon]:
         """Generator which yields all matching ibpkeycons."""

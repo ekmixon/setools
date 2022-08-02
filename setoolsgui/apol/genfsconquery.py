@@ -264,7 +264,7 @@ class GenfsconQueryTab(AnalysisTab):
         try:
             self.query.range_ = self.range_.text()
         except Exception as ex:
-            self.log.info("Context range error: " + str(ex))
+            self.log.info(f"Context range error: {str(ex)}")
             self.set_criteria_error(self.range_, ex)
 
     #

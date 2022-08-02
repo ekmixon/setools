@@ -65,10 +65,7 @@ class TypeQuery(MatchAlias, MatchName, PolicyQuery):
 
     @permissive.setter
     def permissive(self, value) -> None:
-        if value is None:
-            self._permissive = None
-        else:
-            self._permissive = bool(value)
+        self._permissive = None if value is None else bool(value)
 
     def __init__(self, policy, **kwargs) -> None:
         super(TypeQuery, self).__init__(policy, **kwargs)

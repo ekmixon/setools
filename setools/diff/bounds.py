@@ -60,12 +60,12 @@ class BoundsDifference(Difference):
             (BoundsWrapper(c) for c in cast(List[Bounds], self._right_typebounds)),
             key=lambda b: str(b.child))
 
-        self.modified_typebounds = []
-
-        for left_bound, right_bound in matched_typebounds:
-            if type_wrapper_factory(left_bound.parent) != type_wrapper_factory(right_bound.parent):
-                self.modified_typebounds.append(ModifiedBounds(
-                    left_bound, right_bound.parent, left_bound.parent))
+        self.modified_typebounds = [
+            ModifiedBounds(left_bound, right_bound.parent, left_bound.parent)
+            for left_bound, right_bound in matched_typebounds
+            if type_wrapper_factory(left_bound.parent)
+            != type_wrapper_factory(right_bound.parent)
+        ]
 
     #
     # Internal functions

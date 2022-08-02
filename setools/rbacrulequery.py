@@ -104,9 +104,8 @@ class RBACRuleQuery(mixins.MatchObjClass, query.PolicyQuery):
             #
             # Matching on rule type
             #
-            if self.ruletype:
-                if rule.ruletype not in self.ruletype:
-                    continue
+            if self.ruletype and rule.ruletype not in self.ruletype:
+                continue
 
             #
             # Matching on source role

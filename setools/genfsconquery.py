@@ -93,7 +93,7 @@ class GenfsconQuery(MatchContext, PolicyQuery):
                     self.path_regex):
                 continue
 
-            if self.filetype and not self.filetype == genfs.filetype:
+            if self.filetype and self.filetype != genfs.filetype:
                 continue
 
             if not self._match_context(genfs.context):

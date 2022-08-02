@@ -167,8 +167,7 @@ class PortconQueryTab(AnalysisTab):
 
     def set_ports(self):
         try:
-            pending_ports = self.ports.text()
-            if pending_ports:
+            if pending_ports := self.ports.text():
                 try:
                     ports = [int(i) for i in pending_ports.split("-")]
                 except ValueError as ex:
@@ -254,7 +253,7 @@ class PortconQueryTab(AnalysisTab):
         try:
             self.query.range_ = self.range_.text()
         except Exception as ex:
-            self.log.info("Context range error: " + str(ex))
+            self.log.info(f"Context range error: {str(ex)}")
             self.set_criteria_error(self.range_, ex)
 
     #

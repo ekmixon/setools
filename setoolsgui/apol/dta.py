@@ -167,9 +167,7 @@ class DomainTransitionAnalysisTab(AnalysisTab):
 
     def set_source(self):
         try:
-            # look up the type here, so invalid types can be caught immediately
-            text = self.source.text()
-            if text:
+            if text := self.source.text():
                 self.query.source = self.policy.lookup_type(text)
             else:
                 self.query.source = None
@@ -185,9 +183,7 @@ class DomainTransitionAnalysisTab(AnalysisTab):
 
     def set_target(self):
         try:
-            # look up the type here, so invalid types can be caught immediately
-            text = self.target.text()
-            if text:
+            if text := self.target.text():
                 self.query.target = self.policy.lookup_type(text)
             else:
                 self.query.target = None
@@ -240,11 +236,11 @@ class DomainTransitionAnalysisTab(AnalysisTab):
     #
     def _new_browser_item(self, type_, parent, rules=None, children=None):
         # build main item
-        item = QTreeWidgetItem(parent if parent else self.browser)
+        item = QTreeWidgetItem(parent or self.browser)
         item.setText(0, str(type_))
         item.type_ = type_
-        item.children = children if children else []
-        item.rules = rules if rules else []
+        item.children = children or []
+        item.rules = rules or []
         item.child_populated = children is not None
 
         # add child items

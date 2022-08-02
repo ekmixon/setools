@@ -40,13 +40,15 @@ class CleanCommand(clean):
                                        os.walk("setoolsgui"),
                                        os.walk("tests"),
                                        os.walk("qhc")):
-            for f in files:
-                if os.path.splitext(f)[-1] in extensions_to_remove:
-                    files_to_remove.append(join(root, f))
+            files_to_remove.extend(
+                join(root, f)
+                for f in files
+                if os.path.splitext(f)[-1] in extensions_to_remove
+            )
 
-            for d in dirs:
-                if d == "__pycache__" and self.all:
-                    dirs_to_remove.append(join(root, d))
+            dirs_to_remove.extend(
+                join(root, d) for d in dirs if d == "__pycache__" and self.all
+            )
 
         for file in files_to_remove:
             with suppress(Exception):
@@ -84,16 +86,12 @@ include_dirs = []
 
 with suppress(KeyError):
     userspace_src = os.environ["USERSPACE_SRC"]
-    include_dirs.insert(0, userspace_src + "/libsepol/include")
-    include_dirs.insert(1, userspace_src + "/libselinux/include")
-    lib_dirs.insert(0, userspace_src + "/libsepol/src")
-    lib_dirs.insert(1, userspace_src + "/libselinux/src")
+    include_dirs.insert(0, f"{userspace_src}/libsepol/include")
+    include_dirs.insert(1, f"{userspace_src}/libselinux/include")
+    lib_dirs.insert(0, f"{userspace_src}/libsepol/src")
+    lib_dirs.insert(1, f"{userspace_src}/libselinux/src")
 
-if sys.platform.startswith('darwin'):
-    macros=[('DARWIN',1)]
-else:
-    macros=[]
-
+macros = [('DARWIN',1)] if sys.platform.startswith('darwin') else []
 # Code coverage.  Enable this to get coverage in the cython code.
 enable_coverage = bool(os.environ.get("SETOOLS_COVERAGE", False))
 if enable_coverage:

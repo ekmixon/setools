@@ -153,9 +153,10 @@ class TypeQueryTab(AnalysisTab):
     # Attribute criteria
     #
     def set_attrs(self):
-        selected_attrs = []
-        for index in self.attrs.selectionModel().selectedIndexes():
-            selected_attrs.append(self.attr_model.data(index, Qt.UserRole))
+        selected_attrs = [
+            self.attr_model.data(index, Qt.UserRole)
+            for index in self.attrs.selectionModel().selectedIndexes()
+        ]
 
         self.query.attrs = selected_attrs
 

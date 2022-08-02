@@ -101,7 +101,7 @@ args = parser.parse_args()
 if not args.target and (args.shortest_path or args.all_paths):
     parser.error("The target type must be specified to determine a path.")
 
-if args.target and not (args.shortest_path or args.all_paths):
+if args.target and not args.shortest_path and not args.all_paths:
     parser.error("An algorithm must be specified to determine a path.")
 
 if args.debug:
@@ -117,10 +117,11 @@ try:
     g = setools.DomainTransitionAnalysis(p, reverse=args.reverse, exclude=args.exclude)
 
     if args.shortest_path or args.all_paths:
-        if args.shortest_path:
-            paths = g.all_shortest_paths(args.source, args.target)
-        else:
-            paths = g.all_paths(args.source, args.target, args.all_paths)
+        paths = (
+            g.all_shortest_paths(args.source, args.target)
+            if args.shortest_path
+            else g.all_paths(args.source, args.target, args.all_paths)
+        )
 
         i = 0
         for i, path in enumerate(paths, start=1):

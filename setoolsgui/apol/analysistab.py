@@ -52,25 +52,34 @@ class TabRegistry(sip.wrappertype):
         classdef = super().__new__(cls, clsname, superclasses, attributedict)
 
         if clsname != "AnalysisTab":
-            assert "section" in attributedict, "Class {} is missing the section value, " \
-                "this is an setools bug".format(clsname)
+            assert (
+                "section" in attributedict
+            ), f"Class {clsname} is missing the section value, this is an setools bug"
 
-            assert "tab_title" in attributedict, "Class {} is missing the tab_title value, " \
-                "this is an setools bug".format(clsname)
 
-            assert "mlsonly" in attributedict, "Class {} is missing the mlsonly value, " \
-                "this is an setools bug".format(clsname)
+            assert (
+                "tab_title" in attributedict
+            ), f"Class {clsname} is missing the tab_title value, this is an setools bug"
+
+
+            assert (
+                "mlsonly" in attributedict
+            ), f"Class {clsname} is missing the mlsonly value, this is an setools bug"
+
 
             # ensure there is no duplication of class name or title
             for existing_tabname, existing_class in TAB_REGISTRY.items():
                 if existing_tabname == clsname:
-                    raise TypeError("Analysis tab {} conflicts with registered tab {}, "
-                                    "this is an setools bug".format(clsname, existing_tabname))
+                    raise TypeError(
+                        f"Analysis tab {clsname} conflicts with registered tab {existing_tabname}, this is an setools bug"
+                    )
+
 
                 if existing_class.tab_title == attributedict["tab_title"]:
-                    raise TypeError("Analysis tab {}'s title \"{}\" conflicts with registered tab "
-                                    "{}, this is an setools bug.".
-                                    format(clsname, attributedict["tab_title"], existing_tabname))
+                    raise TypeError(
+                        f"""Analysis tab {clsname}'s title \"{attributedict["tab_title"]}\" conflicts with registered tab {existing_tabname}, this is an setools bug."""
+                    )
+
 
             TAB_REGISTRY[clsname] = classdef
 

@@ -136,8 +136,7 @@ class PermissionMap:
 
     def __iter__(self) -> Iterable[Mapping]:
         for cls in self.classes():
-            for mapping in self.perms(cls):
-                yield mapping
+            yield from self.perms(cls)
 
     def load(self, permmapfile: str) -> None:
         """

@@ -53,15 +53,12 @@ class FSUsesDifference(Difference):
             (FSUseWrapper(fs) for fs in self.left_policy.fs_uses()),
             (FSUseWrapper(fs) for fs in self.right_policy.fs_uses()))
 
-        self.modified_fs_uses = []
-
-        for left_rule, right_rule in matched:
-            # Criteria for modified rules
-            # 1. change to context
-            if ContextWrapper(left_rule.context) != ContextWrapper(right_rule.context):
-                self.modified_fs_uses.append(ModifiedFSUse(left_rule,
-                                                           right_rule.context,
-                                                           left_rule.context))
+        self.modified_fs_uses = [
+            ModifiedFSUse(left_rule, right_rule.context, left_rule.context)
+            for left_rule, right_rule in matched
+            if ContextWrapper(left_rule.context)
+            != ContextWrapper(right_rule.context)
+        ]
 
     #
     # Internal functions

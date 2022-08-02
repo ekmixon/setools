@@ -67,15 +67,16 @@ class AssertRBAC(CheckerModule):
             raise InvalidCheckValue(
                 "At least one of source or target options must be set.")
 
-        source_exempt_expect_overlap = self.exempt_source & self.expect_source
-        if source_exempt_expect_overlap:
-            self.log.info("Overlap in expect_source and exempt_source: {}".
-                          format(", ".join(i.name for i in source_exempt_expect_overlap)))
+        if source_exempt_expect_overlap := self.exempt_source & self.expect_source:
+            self.log.info(
+                f'Overlap in expect_source and exempt_source: {", ".join((i.name for i in source_exempt_expect_overlap))}'
+            )
 
-        target_exempt_expect_overlap = self.exempt_target & self.expect_target
-        if target_exempt_expect_overlap:
-            self.log.info("Overlap in expect_target and exempt_target: {}".
-                          format(", ".join(i.name for i in target_exempt_expect_overlap)))
+
+        if target_exempt_expect_overlap := self.exempt_target & self.expect_target:
+            self.log.info(
+                f'Overlap in expect_target and exempt_target: {", ".join((i.name for i in target_exempt_expect_overlap))}'
+            )
 
     def run(self) -> List:
         assert any((self.source, self.target)), "AssertRBAC no options set, this is a bug."
@@ -97,7 +98,7 @@ class AssertRBAC(CheckerModule):
             unseen_sources -= srcs
             unseen_targets -= tgts
             if (srcs - self.expect_source - self.exempt_source) and \
-                    (tgts - self.expect_target - self.exempt_target):
+                        (tgts - self.expect_target - self.exempt_target):
 
                 self.log_fail(str(rule))
                 failures.append(rule)
@@ -105,14 +106,14 @@ class AssertRBAC(CheckerModule):
                 self.log_ok(str(rule))
 
         for item in unseen_sources:
-            failure = "Expected rule with source \"{}\" not found.".format(item)
+            failure = f'Expected rule with source \"{item}\" not found.'
             self.log_fail(failure)
             failures.append(failure)
 
         for item in unseen_targets:
-            failure = "Expected rule with target \"{}\" not found.".format(item)
+            failure = f'Expected rule with target \"{item}\" not found.'
             self.log_fail(failure)
             failures.append(failure)
 
-        self.log.debug("{} failure(s)".format(failures))
+        self.log.debug(f"{failures} failure(s)")
         return failures

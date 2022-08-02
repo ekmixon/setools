@@ -72,7 +72,7 @@ class RolesDifference(Difference):
             (role_wrapper_factory(r) for r in self.left_policy.roles()),
             (role_wrapper_factory(r) for r in self.right_policy.roles()))
 
-        self.modified_roles = dict()
+        self.modified_roles = {}
 
         for left_role, right_role in matched_roles:
             # Criteria for modified roles

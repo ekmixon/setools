@@ -58,16 +58,17 @@ class EmptyTypeAttr(CheckerModule):
     def attr(self, value):
         try:
             if not value:
-                raise InvalidCheckValue("{}: \"{}\" setting is missing.".format(self.checkname,
-                                                                                ATTR_OPT))
+                raise InvalidCheckValue(
+                    f'{self.checkname}: \"{ATTR_OPT}\" setting is missing.'
+                )
+
 
             self._attr = self.policy.lookup_typeattr(value)
             self._pass_by_missing = False
 
         except InvalidType as e:
             if not self.missing_ok:
-                raise InvalidCheckValue("{}: attr setting error: {}".format(
-                    self.checkname, e)) from e
+                raise InvalidCheckValue(f"{self.checkname}: attr setting error: {e}") from e
 
             self._attr = value
             self._pass_by_missing = True
@@ -80,29 +81,24 @@ class EmptyTypeAttr(CheckerModule):
     def missing_ok(self, value):
         self._missing_ok = config_bool_value(value)
 
-        if self._missing_ok and isinstance(self.attr, str):
-            # attr is only a string if it doesn't exist.
-            self._pass_by_missing = True
-        else:
-            self._pass_by_missing = False
+        self._pass_by_missing = bool(self._missing_ok and isinstance(self.attr, str))
 
     def run(self) -> List:
-        self.log.info("Checking type attribute {} is empty.".format(self.attr))
+        self.log.info(f"Checking type attribute {self.attr} is empty.")
 
         failures = []
 
         if self._pass_by_missing:
-            self.log_info("    {} does not exist.".format(self.attr))
+            self.log_info(f"    {self.attr} does not exist.")
         else:
-            self.output.write("Member types of {}:\n".format(self.attr))
+            self.output.write(f"Member types of {self.attr}:\n")
 
-            types = sorted(self.attr.expand())
-            if types:
+            if types := sorted(self.attr.expand()):
                 for type_ in types:
                     self.log_fail(type_.name)
                     failures.append(type_)
             else:
                 self.log_ok("    <empty>")
 
-        self.log.debug("{} failure(s)".format(failures))
+        self.log.debug(f"{failures} failure(s)")
         return failures

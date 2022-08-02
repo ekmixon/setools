@@ -205,9 +205,10 @@ class RBACRuleQueryTab(AnalysisTab):
     #
 
     def set_tclass(self):
-        selected_classes = []
-        for index in self.tclass.selectionModel().selectedIndexes():
-            selected_classes.append(self.class_model.data(index, Qt.UserRole))
+        selected_classes = [
+            self.class_model.data(index, Qt.UserRole)
+            for index in self.tclass.selectionModel().selectedIndexes()
+        ]
 
         self.query.tclass = selected_classes
 
@@ -272,11 +273,12 @@ class RBACRuleQueryTab(AnalysisTab):
 
     def run(self, button):
         # right now there is only one button.
-        rule_types = []
+        rule_types = [
+            mode.objectName()
+            for mode in [self.allow, self.role_transition]
+            if mode.isChecked()
+        ]
 
-        for mode in [self.allow, self.role_transition]:
-            if mode.isChecked():
-                rule_types.append(mode.objectName())
 
         self.query.ruletype = rule_types
         self.query.source_indirect = self.source_indirect.isChecked()

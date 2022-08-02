@@ -48,10 +48,7 @@ class BoolQuery(MatchName, PolicyQuery):
 
     @default.setter
     def default(self, value) -> None:
-        if value is None:
-            self._default = None
-        else:
-            self._default = bool(value)
+        self._default = None if value is None else bool(value)
 
     def __init__(self, policy, **kwargs) -> None:
         super(BoolQuery, self).__init__(policy, **kwargs)

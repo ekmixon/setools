@@ -177,8 +177,7 @@ class IbpkeyconQueryTab(AnalysisTab):
 
     def set_pkeys(self):
         try:
-            pending_pkeys = self.pkeys.text()
-            if pending_pkeys:
+            if pending_pkeys := self.pkeys.text():
                 try:
                     pkeys = [int(i) for i in pending_pkeys.split("-")]
                 except ValueError as ex:
@@ -264,7 +263,7 @@ class IbpkeyconQueryTab(AnalysisTab):
         try:
             self.query.range_ = self.range_.text()
         except Exception as ex:
-            self.log.info("Context range error: " + str(ex))
+            self.log.info(f"Context range error: {str(ex)}")
             self.set_criteria_error(self.range_, ex)
 
     #

@@ -52,15 +52,14 @@ class PortconsDifference(Difference):
             (PortconWrapper(n) for n in self.left_policy.portcons()),
             (PortconWrapper(n) for n in self.right_policy.portcons()))
 
-        self.modified_portcons = []
-
-        for left_portcon, right_portcon in matched_portcons:
-            # Criteria for modified portcons
-            # 1. change to context
-            if ContextWrapper(left_portcon.context) != ContextWrapper(right_portcon.context):
-                self.modified_portcons.append(ModifiedPortcon(left_portcon,
-                                                              right_portcon.context,
-                                                              left_portcon.context))
+        self.modified_portcons = [
+            ModifiedPortcon(
+                left_portcon, right_portcon.context, left_portcon.context
+            )
+            for left_portcon, right_portcon in matched_portcons
+            if ContextWrapper(left_portcon.context)
+            != ContextWrapper(right_portcon.context)
+        ]
 
     #
     # Internal functions

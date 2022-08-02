@@ -46,11 +46,11 @@ class MatchAlias:
         obj     An object with an alias generator method named "aliases"
         """
 
-        if not self.alias:
-            # if there is no criteria, everything matches.
-            return True
-
-        return match_in_set(obj.aliases(), self.alias, self.alias_regex)
+        return (
+            match_in_set(obj.aliases(), self.alias, self.alias_regex)
+            if self.alias
+            else True
+        )
 
 
 class MatchContext:
@@ -127,16 +127,17 @@ class MatchContext:
                 self.type_regex):
             return False
 
-        if self.range_ and not match_range(
+        return bool(
+            not self.range_
+            or match_range(
                 context.range_,
                 self.range_,
                 self.range_subset,
                 self.range_overlap,
                 self.range_superset,
-                self.range_proper):
-            return False
-
-        return True
+                self.range_proper,
+            )
+        )
 
 
 class MatchName:
@@ -159,7 +160,7 @@ class MatchName:
 
         if self.alias_deref:
             return match_regex(obj, self.name, self.name_regex) or \
-                match_in_set(obj.aliases(), self.name, self.name_regex)
+                    match_in_set(obj.aliases(), self.name, self.name_regex)
         else:
             return match_regex(obj, self.name, self.name_regex)
 

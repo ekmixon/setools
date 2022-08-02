@@ -63,10 +63,7 @@ class SEToolsListModel(QAbstractListModel):
         self.endResetModel()
 
     def rowCount(self, parent=QModelIndex()):
-        if self.item_list:
-            return len(self.item_list)
-        else:
-            return 0
+        return len(self.item_list) if self.item_list else 0
 
     def columnCount(self, parent=QModelIndex()):
         return 1
@@ -150,10 +147,7 @@ class SEToolsTableModel(QAbstractTableModel):
             return self.headers[section]
 
     def rowCount(self, parent=QModelIndex()):
-        if self.resultlist:
-            return len(self.resultlist)
-        else:
-            return 0
+        return len(self.resultlist) if self.resultlist else 0
 
     def columnCount(self, parent=QModelIndex()):
         return len(self.headers)

@@ -257,7 +257,7 @@ class FSUseQueryTab(AnalysisTab):
         try:
             self.query.range_ = self.range_.text()
         except Exception as ex:
-            self.log.info("Context range error: " + str(ex))
+            self.log.info(f"Context range error: {str(ex)}")
             self.set_criteria_error(self.range_, ex)
 
     #
@@ -291,11 +291,12 @@ class FSUseQueryTab(AnalysisTab):
     #
     def run(self, button):
         # right now there is only one button.
-        rule_types = []
+        rule_types = [
+            mode.objectName()
+            for mode in [self.fs_use_xattr, self.fs_use_trans, self.fs_use_task]
+            if mode.isChecked()
+        ]
 
-        for mode in [self.fs_use_xattr, self.fs_use_trans, self.fs_use_task]:
-            if mode.isChecked():
-                rule_types.append(mode.objectName())
 
         self.query.ruletype = rule_types
         self.query.range_overlap = self.range_overlap.isChecked()

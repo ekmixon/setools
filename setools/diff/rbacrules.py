@@ -91,14 +91,12 @@ class RBACRulesDifference(Difference):
             self._expand_generator(self._right_rbac_rules[RBACRuletype.role_transition],
                                    RoleTransitionWrapper))
 
-        modified = []
-        for left_rule, right_rule in matched:
-            # Criteria for modified rules
-            # 1. change to default role
-            if role_wrapper_factory(left_rule.default) != role_wrapper_factory(right_rule.default):
-                modified.append(ModifiedRBACRule(left_rule,
-                                                 right_rule.default,
-                                                 left_rule.default))
+        modified = [
+            ModifiedRBACRule(left_rule, right_rule.default, left_rule.default)
+            for left_rule, right_rule in matched
+            if role_wrapper_factory(left_rule.default)
+            != role_wrapper_factory(right_rule.default)
+        ]
 
         self.added_role_transitions = added
         self.removed_role_transitions = removed

@@ -34,8 +34,10 @@ class SEToolsListView(QListView):
 
     def invert(self):
         """Invert the selection."""
-        if self.selectionMode() != QAbstractItemView.ExtendedSelection and \
-                self.selectionMode() != QAbstractItemView.MultiSelection:
+        if self.selectionMode() not in [
+            QAbstractItemView.ExtendedSelection,
+            QAbstractItemView.MultiSelection,
+        ]:
 
             self.log.debug("Attempted to invert list {0} which doesn't have multiselect.".
                            format(self.objectName()))

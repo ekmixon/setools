@@ -34,10 +34,7 @@ def match_regex(obj, criteria, regex: bool) -> bool:
     regex       If regular expression matching should be used.
     """
 
-    if regex:
-        return bool(criteria.search(str(obj)))
-    else:
-        return obj == criteria
+    return bool(criteria.search(str(obj))) if regex else obj == criteria
 
 
 def match_set(obj, criteria, equal: bool) -> bool:
@@ -51,10 +48,7 @@ def match_set(obj, criteria, equal: bool) -> bool:
                 any set intersection will match.
     """
 
-    if equal:
-        return obj == criteria
-    else:
-        return bool(obj.intersection(criteria))
+    return obj == criteria if equal else bool(obj.intersection(criteria))
 
 
 def match_in_set(obj, criteria, regex: bool) -> bool:
@@ -86,13 +80,12 @@ def match_indirect_regex(obj, criteria, indirect: bool, regex: bool) -> bool:
                 expanding an attribute.
     """
 
-    if indirect:
-        if regex:
-            return bool([o for o in obj.expand() if criteria.search(str(o))])
-        else:
-            return bool(set(criteria.expand()).intersection(obj.expand()))
-    else:
+    if not indirect:
         return match_regex(obj, criteria, regex)
+    if regex:
+        return bool([o for o in obj.expand() if criteria.search(str(o))])
+    else:
+        return bool(set(criteria.expand()).intersection(obj.expand()))
 
 
 def match_regex_or_set(obj, criteria, equal: bool, regex: bool) -> bool:
@@ -199,13 +192,13 @@ def validate_perms_any(perms: Iterable[str], tclass: Optional[Iterable[ObjClass]
 
     if tclass:
         # make local mutable set
-        selected_classes = set(c for c in tclass)
+        selected_classes = set(tclass)
     elif policy:
         selected_classes = set(policy.classes())
     else:
         raise ValueError("No object class(es) or policy specified.")
 
-    invalid = set(p for p in perms)
+    invalid = set(perms)
     for c in selected_classes:
         invalid -= c.perms
 
@@ -217,12 +210,13 @@ def validate_perms_any(perms: Iterable[str], tclass: Optional[Iterable[ObjClass]
     else:
         if tclass:
             raise InvalidPermission(
-                "Permission(s) do not exist in the specified classes: {}"
-                .format(", ".join(invalid)))
+                f'Permission(s) do not exist in the specified classes: {", ".join(invalid)}'
+            )
+
         else:
             raise InvalidPermission(
-                "Permission(s) do not exist any class: {}"
-                .format(", ".join(invalid)))
+                f'Permission(s) do not exist any class: {", ".join(invalid)}'
+            )
 
 
 def xperm_str_to_tuple_ranges(perms: str, separator: str = ",") -> List[Tuple[int, int]]:
@@ -249,6 +243,6 @@ def xperm_str_to_tuple_ranges(perms: str, separator: str = ",") -> List[Tuple[in
         elif len(rng) == 1:
             xperms.append((int(rng[0], base=16), int(rng[0], base=16)))
         else:
-            raise ValueError("Unable to parse \"{}\" for xperms.".format(item))
+            raise ValueError(f'Unable to parse \"{item}\" for xperms.')
 
     return xperms

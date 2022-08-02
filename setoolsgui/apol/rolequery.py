@@ -62,7 +62,7 @@ class RoleQueryTab(AnalysisTab):
 
         # populate role list
         self.role_model = SEToolsListModel(self)
-        self.role_model.item_list = sorted(r for r in self.policy.roles())
+        self.role_model.item_list = sorted(iter(self.policy.roles()))
         self.roles.setModel(self.role_model)
 
         # populate type list
@@ -153,9 +153,10 @@ class RoleQueryTab(AnalysisTab):
     # Type criteria
     #
     def set_types(self):
-        selected_types = []
-        for index in self.types.selectionModel().selectedIndexes():
-            selected_types.append(self.type_model.data(index, Qt.UserRole))
+        selected_types = [
+            self.type_model.data(index, Qt.UserRole)
+            for index in self.types.selectionModel().selectedIndexes()
+        ]
 
         self.query.types = selected_types
 

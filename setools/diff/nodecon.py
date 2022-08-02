@@ -53,15 +53,14 @@ class NodeconsDifference(Difference):
             (NodeconWrapper(n) for n in self.left_policy.nodecons()),
             (NodeconWrapper(n) for n in self.right_policy.nodecons()))
 
-        self.modified_nodecons = []
-
-        for left_nodecon, right_nodecon in matched_nodecons:
-            # Criteria for modified nodecons
-            # 1. change to context
-            if ContextWrapper(left_nodecon.context) != ContextWrapper(right_nodecon.context):
-                self.modified_nodecons.append(ModifiedNodecon(left_nodecon,
-                                                              right_nodecon.context,
-                                                              left_nodecon.context))
+        self.modified_nodecons = [
+            ModifiedNodecon(
+                left_nodecon, right_nodecon.context, left_nodecon.context
+            )
+            for left_nodecon, right_nodecon in matched_nodecons
+            if ContextWrapper(left_nodecon.context)
+            != ContextWrapper(right_nodecon.context)
+        ]
 
     #
     # Internal functions

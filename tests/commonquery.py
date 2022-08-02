@@ -59,14 +59,14 @@ class CommonQueryTest(unittest.TestCase):
 
     def test_010_perm_indirect_intersect(self):
         """Common query with intersect permission name patch."""
-        q = CommonQuery(self.p, perms=set(["null"]), perms_equal=False)
+        q = CommonQuery(self.p, perms={"null"}, perms_equal=False)
 
         commons = sorted(str(c) for c in q.results())
         self.assertListEqual(["test10a", "test10b"], commons)
 
     def test_011_perm_indirect_equal(self):
         """Common query with equal permission name patch."""
-        q = CommonQuery(self.p, perms=set(["read", "write"]), perms_equal=True)
+        q = CommonQuery(self.p, perms={"read", "write"}, perms_equal=True)
 
         commons = sorted(str(c) for c in q.results())
         self.assertListEqual(["test11a"], commons)

@@ -107,11 +107,7 @@ def _avrule_expand_generator(rule_list: List[AVRule], rule_db: RuleDB, type_db: 
     memory. Second, it allows redundant rules to be easily eliminated. And,
     third, it makes it easy to create the added, removed, and modified rules.
     """
-    if side == Side.left:
-        types = type_db.left
-    else:
-        types = type_db.right
-
+    types = type_db.left if side == Side.left else type_db.right
     for unexpanded_rule in rule_list:
         try:
             cond_exp = intern(str(unexpanded_rule.conditional))
@@ -121,10 +117,9 @@ def _avrule_expand_generator(rule_list: List[AVRule], rule_db: RuleDB, type_db: 
             block_bool = TERULES_UNCONDITIONAL_BLOCK
 
         if cond_exp not in rule_db:
-            rule_db[cond_exp] = dict()
-            rule_db[cond_exp][block_bool] = dict()
+            rule_db[cond_exp] = {block_bool: {}}
         elif block_bool not in rule_db[cond_exp]:
-            rule_db[cond_exp][block_bool] = dict()
+            rule_db[cond_exp][block_bool] = {}
 
         tclass = unexpanded_rule.tclass.name
         perms = set(unexpanded_rule.perms)
@@ -136,13 +131,13 @@ def _avrule_expand_generator(rule_list: List[AVRule], rule_db: RuleDB, type_db: 
             if src_str not in types:
                 types[src_str] = src
             if src_str not in block:
-                block[src_str] = dict()
+                block[src_str] = {}
             for tgt in unexpanded_rule.target.expand():
                 tgt_str = tgt.name
                 if tgt_str not in types:
                     types[tgt_str] = tgt
                 if tgt_str not in block[src_str]:
-                    block[src_str][tgt_str] = dict()
+                    block[src_str][tgt_str] = {}
                 left_side = None
                 right_side = None
                 if tclass in block[src_str][tgt_str]:
@@ -150,9 +145,7 @@ def _avrule_expand_generator(rule_list: List[AVRule], rule_db: RuleDB, type_db: 
                     left_side = sides.left
                     right_side = sides.right
                 if side == Side.left:
-                    if not left_side:
-                        left_side = side_data
-                    else:
+                    if left_side:
                         """
                         The original tuple and perm set might be shared with many
                         expanded rules so a new ones must created.
@@ -162,16 +155,17 @@ def _avrule_expand_generator(rule_list: List[AVRule], rule_db: RuleDB, type_db: 
                         p = left_side.perms | perms
                         orig = left_side.orig_rule
                         left_side = RuleDBSideDataRecord(p, orig)
-                else:
-                    if not right_side:
-                        right_side = side_data
                     else:
-                        """
+                        left_side = side_data
+                elif not right_side:
+                    right_side = side_data
+                else:
+                    """
                         Must create new tuple and perm set as explained above.
                         """
-                        p = right_side.perms | perms
-                        orig = right_side.orig_rule
-                        right_side = RuleDBSideDataRecord(p, orig)
+                    p = right_side.perms | perms
+                    orig = right_side.orig_rule
+                    right_side = RuleDBSideDataRecord(p, orig)
 
                 block[src_str][tgt_str][tclass] = RuleDBSidesRecord(left_side, right_side)
 
@@ -195,19 +189,21 @@ def _av_remove_redundant_rules(rule_db: RuleDB) -> None:
                         left_side = side_data.left
                         right_side = side_data.right
                         if uncond_side_data.left and left_side:
-                            c = left_side.perms & uncond_side_data.left.perms
-                            if c:
-                                p = left_side.perms - c
-                                if p:
+                            if (
+                                c := left_side.perms
+                                & uncond_side_data.left.perms
+                            ):
+                                if p := left_side.perms - c:
                                     left_side = RuleDBSideDataRecord(p, left_side.orig_rule)
                                 else:
                                     left_side = None
                                 tgt_data[tclass] = RuleDBSidesRecord(left_side, right_side)
                         if uncond_side_data.right and right_side:
-                            c = right_side.perms & uncond_side_data.right.perms
-                            if c:
-                                p = right_side.perms - c
-                                if p:
+                            if (
+                                c := right_side.perms
+                                & uncond_side_data.right.perms
+                            ):
+                                if p := right_side.perms - c:
                                     right_side = RuleDBSideDataRecord(p, right_side.orig_rule)
                                 else:
                                     right_side = None
@@ -273,10 +269,10 @@ def av_diff_template(ruletype: str) -> Callable[["TERulesDifference"], None]:
         if self._left_te_rules is None or self._right_te_rules is None:
             self._create_te_rule_lists()
 
-        type_db = TypeDBRecord(dict(), dict())
-        rule_db: RuleDB = dict()
-        rule_db[TERULES_UNCONDITIONAL] = dict()
-        rule_db[TERULES_UNCONDITIONAL][TERULES_UNCONDITIONAL_BLOCK] = dict()
+        type_db = TypeDBRecord({}, {})
+        rule_db: RuleDB = {}
+        rule_db[TERULES_UNCONDITIONAL] = {}
+        rule_db[TERULES_UNCONDITIONAL][TERULES_UNCONDITIONAL_BLOCK] = {}
 
         self.log.info("Expanding AV rules from {0.left_policy}.".format(self))
         _avrule_expand_generator(self._left_te_rules[ruletype], rule_db, type_db, Side.left)
@@ -306,7 +302,7 @@ def _avxrule_expand_generator(rule_list: Iterable[AVRuleXperm]) -> Iterable["AVR
     Generator that yields wrapped, expanded, av(x) rules with
     unioned permission sets.
     """
-    items: Dict["AVRuleXpermWrapper", "AVRuleXpermWrapper"] = dict()
+    items: Dict["AVRuleXpermWrapper", "AVRuleXpermWrapper"] = {}
 
     for unexpanded_rule in rule_list:
         for expanded_rule in unexpanded_rule.expand():
@@ -371,8 +367,8 @@ def avx_diff_template(ruletype: str) -> Callable[["TERulesDifference"], None]:
                                                IoctlSet(removed_perms),
                                                IoctlSet(p[0] for p in matched_perms)))
 
-        setattr(self, "added_{0}s".format(ruletype), set(a.origin for a in added))
-        setattr(self, "removed_{0}s".format(ruletype), set(r.origin for r in removed))
+        setattr(self, "added_{0}s".format(ruletype), {a.origin for a in added})
+        setattr(self, "removed_{0}s".format(ruletype), {r.origin for r in removed})
         setattr(self, "modified_{0}s".format(ruletype), modified)
 
     return diff

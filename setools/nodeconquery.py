@@ -76,10 +76,7 @@ class NodeconQuery(MatchContext, PolicyQuery):
 
     @ip_version.setter
     def ip_version(self, value: Optional[Union[str, NodeconIPVersion]]) -> None:
-        if value:
-            self._ip_version = NodeconIPVersion.lookup(value)
-        else:
-            self._ip_version = None
+        self._ip_version = NodeconIPVersion.lookup(value) if value else None
 
     @property
     def network(self) -> Optional[AnyIPNetwork]:
@@ -87,10 +84,7 @@ class NodeconQuery(MatchContext, PolicyQuery):
 
     @network.setter
     def network(self, value: Optional[Union[str, AnyIPNetwork]]) -> None:
-        if value:
-            self._network = ipaddress.ip_network(value)
-        else:
-            self._network = None
+        self._network = ipaddress.ip_network(value) if value else None
 
     def __init__(self, policy, **kwargs) -> None:
         super(NodeconQuery, self).__init__(policy, **kwargs)
@@ -109,9 +103,8 @@ class NodeconQuery(MatchContext, PolicyQuery):
                 if self.network_overlap:
                     if not self.network.overlaps(nodecon.network):  # type: ignore
                         continue
-                else:
-                    if not nodecon.network == self.network:
-                        continue
+                elif nodecon.network != self.network:
+                    continue
 
             if self.ip_version and self.ip_version != nodecon.ip_version:
                 continue

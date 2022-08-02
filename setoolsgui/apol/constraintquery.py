@@ -184,9 +184,10 @@ class ConstraintQueryTab(AnalysisTab):
     # Class criteria
     #
     def set_tclass(self):
-        selected_classes = []
-        for index in self.tclass.selectionModel().selectedIndexes():
-            selected_classes.append(self.class_model.data(index, Qt.UserRole))
+        selected_classes = [
+            self.class_model.data(index, Qt.UserRole)
+            for index in self.tclass.selectionModel().selectedIndexes()
+        ]
 
         self.query.tclass = selected_classes
         self.perms_model.set_classes(selected_classes)
@@ -198,9 +199,10 @@ class ConstraintQueryTab(AnalysisTab):
     # Permissions criteria
     #
     def set_perms(self):
-        selected_perms = []
-        for index in self.perms.selectionModel().selectedIndexes():
-            selected_perms.append(self.perms_model.data(index, Qt.UserRole))
+        selected_perms = [
+            self.perms_model.data(index, Qt.UserRole)
+            for index in self.perms.selectionModel().selectedIndexes()
+        ]
 
         self.query.perms = selected_perms
 
@@ -298,10 +300,16 @@ class ConstraintQueryTab(AnalysisTab):
     #
     def run(self, button):
         # right now there is only one button.
-        rule_types = []
-        for mode in [self.constrain, self.mlsconstrain, self.validatetrans, self.mlsvalidatetrans]:
-            if mode.isChecked():
-                rule_types.append(mode.objectName())
+        rule_types = [
+            mode.objectName()
+            for mode in [
+                self.constrain,
+                self.mlsconstrain,
+                self.validatetrans,
+                self.mlsvalidatetrans,
+            ]
+            if mode.isChecked()
+        ]
 
         self.query.ruletype = rule_types
         self.query.perms_subset = self.perms_subset.isChecked()

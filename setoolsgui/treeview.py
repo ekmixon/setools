@@ -69,8 +69,7 @@ class SEToolsTreeWidget(QTreeWidget):
         QApplication.clipboard().setText("".join(items))
 
     def event(self, e):
-        if e == QKeySequence.Copy or e == QKeySequence.Cut:
-            self.copy_tree()
-            return True
-        else:
+        if e not in [QKeySequence.Copy, QKeySequence.Cut]:
             return super(SEToolsTreeWidget, self).event(e)
+        self.copy_tree()
+        return True

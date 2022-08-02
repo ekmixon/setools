@@ -70,14 +70,15 @@ class SensitivityQuery(MatchAlias, MatchName, PolicyQuery):
             if not self._match_alias(s):
                 continue
 
-            if self.sens:
-                if self.sens_dom:
-                    if self.sens < s:
-                        continue
-                elif self.sens_domby:
-                    if self.sens > s:
-                        continue
-                elif self.sens != s:
-                    continue
-
+            if self.sens and (
+                self.sens_dom
+                and self.sens < s
+                or not self.sens_dom
+                and self.sens_domby
+                and self.sens > s
+                or not self.sens_dom
+                and not self.sens_domby
+                and self.sens != s
+            ):
+                continue
             yield s

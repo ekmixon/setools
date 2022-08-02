@@ -51,7 +51,7 @@ class InitialSIDsDifference(Difference):
             (SymbolWrapper(i) for i in self.left_policy.initialsids()),
             (SymbolWrapper(i) for i in self.right_policy.initialsids()))
 
-        self.modified_initialsids = dict()
+        self.modified_initialsids = {}
 
         for left_initialsid, right_initialsid in matched_initialsids:
             # Criteria for modified initialsids

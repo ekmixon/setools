@@ -145,10 +145,12 @@ class ApolMainWindow(SEToolsWidget, QMainWindow):
             if reply == QMessageBox.No:
                 return
 
-        filename = QFileDialog.getOpenFileName(self, "Open policy file", ".",
-                                               "SELinux Policies (policy.* sepolicy);;"
-                                               "All Files (*)")[0]
-        if filename:
+        if filename := QFileDialog.getOpenFileName(
+            self,
+            "Open policy file",
+            ".",
+            "SELinux Policies (policy.* sepolicy);;" "All Files (*)",
+        )[0]:
             self.load_policy(filename)
 
         if self._policy != old_policy:
@@ -190,8 +192,9 @@ class ApolMainWindow(SEToolsWidget, QMainWindow):
     # Permission map handling
     #
     def select_permmap(self):
-        filename = QFileDialog.getOpenFileName(self, "Open permission map file", ".")[0]
-        if filename:
+        if filename := QFileDialog.getOpenFileName(
+            self, "Open permission map file", "."
+        )[0]:
             self.load_permmap(filename)
 
     def load_permmap(self, filename=None):
@@ -228,8 +231,9 @@ class ApolMainWindow(SEToolsWidget, QMainWindow):
 
     def save_permmap(self):
         path = str(self._permmap) if self._permmap else "perm_map"
-        filename = QFileDialog.getSaveFileName(self, "Save permission map file", path)[0]
-        if filename:
+        if filename := QFileDialog.getSaveFileName(
+            self, "Save permission map file", path
+        )[0]:
             try:
                 self._permmap.save(filename)
             except Exception as ex:
@@ -574,10 +578,9 @@ class ApolMainWindow(SEToolsWidget, QMainWindow):
                                    format("\n\n".join(loading_errors)))
 
     def save_workspace(self):
-        workspace = {}
         save_errors = []
 
-        workspace["__policy__"] = os.path.abspath(str(self._policy))
+        workspace = {"__policy__": os.path.abspath(str(self._policy))}
         workspace["__permmap__"] = os.path.abspath(str(self._permmap))
         workspace["__tabs__"] = []
 
@@ -664,25 +667,25 @@ class ApolMainWindow(SEToolsWidget, QMainWindow):
         if error != QProcess.FailedToStart:
             return
 
-        self.log.error("Failed to start Qt assistant {}.".format(self.config.assistant))
+        self.log.error(f"Failed to start Qt assistant {self.config.assistant}.")
         self._find_assistant()
 
     def _find_assistant(self):
         """Try to find qt assistant in a few standard locations."""
         for name in POSSIBLE_ASSISTANT:
-            self.log.debug("Trying assistant {}".format(name))
+            self.log.debug(f"Trying assistant {name}")
             filename = shutil.which(name, mode=os.F_OK | os.X_OK, path=BIN_SEARCH_PATHS)
             if filename:
-                self.log.debug("Assistant {} is available and executable.".format(filename))
+                self.log.debug(f"Assistant {filename} is available and executable.")
                 break
         else:
             reply = QMessageBox.question(
-                self, "Qt Assistant Package Installed?",
-                "Failed to start QT Assistant program {}. "
-                "This is typically in the assistant or qt5-assistant package. "
-                "Choose location of Qt Assistant executable?".format(
-                    self.config.assistant),
-                QMessageBox.Yes | QMessageBox.No)
+                self,
+                "Qt Assistant Package Installed?",
+                f"Failed to start QT Assistant program {self.config.assistant}. This is typically in the assistant or qt5-assistant package. Choose location of Qt Assistant executable?",
+                QMessageBox.Yes | QMessageBox.No,
+            )
+
 
             if reply == QMessageBox.No:
                 return
@@ -691,10 +694,10 @@ class ApolMainWindow(SEToolsWidget, QMainWindow):
                                                    "/usr/bin",
                                                    "All Files (*)")[0]
 
-            self.log.debug("User chose assistant {}.".format(filename))
+            self.log.debug(f"User chose assistant {filename}.")
 
         if filename:
-            self.log.debug("Updating config with assistant {}".format(filename))
+            self.log.debug(f"Updating config with assistant {filename}")
             self.config.assistant = filename
             self.config.save()
             self.apol_help()

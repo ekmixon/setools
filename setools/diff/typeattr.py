@@ -69,11 +69,11 @@ class TypeAttributesDifference(Difference):
             format(self))
 
         self.added_type_attributes, self.removed_type_attributes, matched_attributes = \
-            self._set_diff(
+                self._set_diff(
                 (SymbolWrapper(r) for r in self.left_policy.typeattributes()),
                 (SymbolWrapper(r) for r in self.right_policy.typeattributes()))
 
-        self.modified_type_attributes = dict()
+        self.modified_type_attributes = {}
 
         for left_attribute, right_attribute in matched_attributes:
             # Criteria for modified attributes

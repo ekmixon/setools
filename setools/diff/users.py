@@ -78,7 +78,7 @@ class UsersDifference(Difference):
             (user_wrapper_factory(r) for r in self.left_policy.users()),
             (user_wrapper_factory(r) for r in self.right_policy.users()))
 
-        self.modified_users = dict()
+        self.modified_users = {}
 
         for left_user, right_user in matched_users:
             # Criteria for modified users

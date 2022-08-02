@@ -67,11 +67,11 @@ class ReadOnlyExecutables(CheckerModule):
 
             # ignore rule if source or target is an empty attr
             if not sources or not targets:
-                self.log.debug("Ignoring execute rule: {}".format(rule))
+                self.log.debug(f"Ignoring execute rule: {rule}")
                 continue
 
             for t in targets:
-                self.log.debug("Determined {} is executable by: {}".format(t, rule))
+                self.log.debug(f"Determined {t} is executable by: {rule}")
                 collected[t].add(rule)
 
         return collected
@@ -87,7 +87,7 @@ class ReadOnlyExecutables(CheckerModule):
         failures = defaultdict(set)
 
         for exec_type in executables.keys():
-            self.log.debug("Checking if executable type {} is writable.".format(exec_type))
+            self.log.debug(f"Checking if executable type {exec_type} is writable.")
 
             query.target = exec_type
             for rule in sorted(query.results()):
@@ -96,14 +96,14 @@ class ReadOnlyExecutables(CheckerModule):
 
         for exec_type in sorted(failures.keys()):
             self.output.write("\n------------\n\n")
-            self.output.write("Executable type {} is writable.\n\n".format(exec_type))
+            self.output.write(f"Executable type {exec_type} is writable.\n\n")
             self.output.write("Execute rules:\n")
             for rule in sorted(executables[exec_type]):
-                self.output.write("    * {}\n".format(rule))
+                self.output.write(f"    * {rule}\n")
 
             self.output.write("\nWrite rules:\n")
             for rule in sorted(failures[exec_type]):
                 self.log_fail(str(rule))
 
-        self.log.debug("{} failure(s)".format(len(failures)))
+        self.log.debug(f"{len(failures)} failure(s)")
         return sorted(failures.keys())
